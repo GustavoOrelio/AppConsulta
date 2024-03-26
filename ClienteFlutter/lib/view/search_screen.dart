@@ -30,7 +30,8 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     final String userQuery = Uri.encodeComponent(searchController.text);
     try {
-      searchResults = await Provider.of<ApiService>(context, listen: false).fetchGoogleResults(userQuery);
+      searchResults = await Provider.of<ApiService>(context, listen: false)
+          .fetchGoogleResults(userQuery);
       if (searchResults.isEmpty) {
         errorMessage = 'Nenhum resultado encontrado.';
       } else {
@@ -50,7 +51,15 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pesquisa.com'),
-        backgroundColor: Colors.deepPurple,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.purple, Colors.deepPurple],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -62,49 +71,89 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: searchController,
                 decoration: InputDecoration(
                   hintText: 'Faça sua pesquisa',
+                  fillColor: Colors.white,
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      color: Colors.deepPurple.shade200,
+                      width: 1.5,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      color: Colors.deepPurple.shade400,
+                      width: 2,
+                    ),
+                  ),
+                  suffixIcon: searchController.text.isEmpty
+                      ? IconButton(
+                    icon: Icon(Icons.search, color: Colors.deepPurple),
                     onPressed: performSearch,
+                  )
+                      : IconButton(
+                    icon: Icon(Icons.clear, color: Colors.deepPurple),
+                    onPressed: () {
+                      searchController.clear();
+                    },
                   ),
                 ),
+                onChanged: (value) {
+                  setState(() {});
+                },
                 onSubmitted: (value) => performSearch(),
               ),
             ),
-            isLoading
-                ? Center(child: CircularProgressIndicator())
-                : errorMessage.isNotEmpty
-                ? Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  Icon(Icons.error_outline, color: Colors.red),
-                  SizedBox(width: 10),
-                  Expanded(child: Text(errorMessage)),
-                ],
-              ),
-            )
-                : AnimatedOpacity(
-              opacity: isLoading ? 0.5 : 1.0,
-              duration: Duration(milliseconds: 500),
-              child: ListView.builder(
+
+            if (isLoading)
+              Center(child: CircularProgressIndicator())
+            else if (errorMessage.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ListTile(
+                    leading: Icon(Icons.error_outline, color: Colors.red),
+                    title:
+                        Text(errorMessage, style: TextStyle(color: Colors.red)),
+                  ),
+                ),
+              )
+            else
+              ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: searchResults.length,
                 itemBuilder: (context, index) {
                   return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    margin: EdgeInsets.all(8.0),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: ListTile(
                       leading: Icon(Icons.link, color: Colors.deepPurple),
                       title: Text(searchResults[index].title),
-                      subtitle: Text(searchResults[index].link, style: TextStyle(color: Colors.blue)),
+                      subtitle: Text(
+                        searchResults[index].link,
+                        style: TextStyle(color: Colors.blue.shade900),
+                      ),
                       onTap: () async {
                         final Uri url = Uri.parse(searchResults[index].link);
-                        if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                        if (!await launchUrl(url,
+                            mode: LaunchMode.externalApplication)) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Não foi possível abrir o link.')),
+                            SnackBar(
+                                content:
+                                    Text('Não foi possível abrir o link.')),
                           );
                         }
                       },
@@ -112,7 +161,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 },
               ),
-            ),
           ],
         ),
       ),
