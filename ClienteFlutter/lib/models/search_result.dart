@@ -6,8 +6,8 @@ class SearchResult {
 
   factory SearchResult.fromJson(Map<String, dynamic> json) {
     return SearchResult(
-      title: json['titulo'] as String? ?? 'Título Padrão', // Fornecendo um valor padrão se nulo
-      link: json['link'] as String? ?? 'http://example.com', // Fornecendo um valor padrão se nulo
+      title: json['titulo'] as String? ?? 'Título Padrão',
+      link: json['link'] as String? ?? 'http://example.com',
     );
   }
 }

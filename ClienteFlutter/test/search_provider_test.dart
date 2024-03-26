@@ -7,8 +7,7 @@ import 'mocks.mocks.dart';
 
 void main() {
   group('SearchProvider Tests', () {
-    late MockApiService
-        mockApiService; // Certifique-se de que MockApiService é gerado para ApiService.
+    late MockApiService mockApiService;
     late SearchProvider searchProvider;
 
     setUp(() {

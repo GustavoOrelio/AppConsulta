@@ -19,7 +19,7 @@ class SearchScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         child: SearchForm(),
       ),
     );

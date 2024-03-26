@@ -6,7 +6,7 @@ import '../models/search_result.dart';
 class SearchResultTile extends StatelessWidget {
   final SearchResult searchResult;
 
-  SearchResultTile({required this.searchResult});
+  const SearchResultTile({super.key, required this.searchResult});
 
   @override
   Widget build(BuildContext context) {
